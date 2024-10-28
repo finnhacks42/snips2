@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Historical Decomposition Plot with Date Selector and Download Options</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<body>
+  <div>
+    <label for="startDate">Start Date:</label>
+    <select id="startDate"></select>
+
+    <label for="endDate">End Date:</label>
+    <select id="endDate"></select>
+  </div>
+  <svg width="960" height="500"></svg>
+  <div>
+    <button id="downloadSVG">Download SVG</button>
+    <button id="downloadData">Download Data</button>
+  </div>
+  <div id="tooltip" style="position: absolute; display: none; padding: 5px; background: lightgray; border: 1px solid #ccc;"></div>
+  <script>
+
+    // Generate sample data from 2012 Q1 to 2024 Q4
+    var parseDate = d3.timeParse("%Y-%m-%d");
+    var formatDate = d3.timeFormat("%Y-Q%q");
+    var quarters = [];
+
+    for (var year = 2012; year <= 2024; year++) {
+      for (var q = 1; q <= 4; q++) {
+        var month = q * 3 - 2; // Convert quarter to month (1, 4, 7, 10)
+        var date = parseDate(year + "-" + String(month).padStart(2, '0') + "-01");
+        quarters.push(date);
+      }
+    }
+
+    // Create data array with random positive and negative values
+    var data = quarters.map(function(date) {
+      return {
+        date: date,
+        Var1: Math.random() * 20 - 10, // Random value between -10 and 10
+        Var2: Math.random() * 20 - 10,
+        Var3: Math.random() * 20 - 10,
+        Var4: Math.random() * 20 - 10,
+        Var5: Math.random() * 20 - 10
+      };
+    });
+
+    // Compute the total value for each data point to find min and max
+    data.forEach(function(d) {
+      d.total = d.Var1 + d.Var2 + d.Var3 + d.Var4 + d.Var5;
+    });
+
+    // Initial date range
+    var initialStartDate = data[0].date;
+    var initialEndDate = data[data.length - 1].date;
+
+    // Set up the SVG canvas dimensions
+    var svg = d3.select("svg"),
+        margin = {top: 20, right: 160, bottom: 50, left: 70},
+        width = svg.attr("width") - margin.left - margin.right,
+        height = svg.attr("height") - margin.top - margin.bottom;
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Define color scale
+    var colors = d3.scaleOrdinal()
+        .domain(["Var1", "Var2", "Var3", "Var4", "Var5"])
+        .range(d3.schemeCategory10);
+
+    // Stack function
+    var stack = d3.stack()
+        .keys(["Var1", "Var2", "Var3", "Var4", "Var5"])
+        .offset(d3.stackOffsetDiverging);
+
+    // Create date selectors
+    var dateOptions = data.map(function(d) { return d.date; });
+
+    var startDateSelect = d3.select("#startDate");
+    var endDateSelect = d3.select("#endDate");
+
+    dateOptions.forEach(function(date) {
+      startDateSelect.append("option")
+          .attr("value", date)
+          .text(formatDate(date));
+      endDateSelect.append("option")
+          .attr("value", date)
+          .text(formatDate(date));
+    });
+
+    // Set default selected options
+    startDateSelect.property("value", initialStartDate);
+    endDateSelect.property("value", initialEndDate);
+
+    // Tooltip div
+    var tooltip = d3.select("#tooltip");
+
+    // Function to update the chart based on selected dates
+    function updateChart() {
+      var selectedStartDate = new Date(startDateSelect.property("value"));
+      var selectedEndDate = new Date(endDateSelect.property("value"));
+
+      // Filter data based on selected date range
+      var filteredData = data.filter(function(d) {
+        return d.date >= selectedStartDate && d.date <= selectedEndDate;
+      });
+
+      // Recompute totals for y-axis scaling
+      filteredData.forEach(function(d) {
+        d.total = d.Var1 + d.Var2 + d.Var3 + d.Var4 + d.Var5;
+      });
+
+      // Find new min and max totals
+      var totalMin = d3.min(filteredData, function(d) { return d.total; });
+      var totalMax = d3.max(filteredData, function(d) { return d.total; });
+
+      // Update scales
+      var x = d3.scaleBand()
+          .domain(filteredData.map(function(d) { return d.date; }))
+          .range([0, width])
+          .padding(0.1);
+
+      var y = d3.scaleLinear()
+          .domain([totalMin - 1, totalMax + 1])
+          .nice()
+          .range([height, 0]);
+
+      // Update axes
+      var xAxis = d3.axisBottom(x)
+          .tickFormat(function(d) {
+            var quarter = Math.floor((d.getMonth() + 3) / 3);
+            return d.getFullYear() + "-Q" + quarter;
+          })
+          .tickValues(filteredData.filter(function(d, i) { return i % 4 === 0; }).map(function(d) { return d.date; }));
+
+      var yAxis = d3.axisLeft(y);
+
+      // Remove existing elements
+      g.selectAll(".serie").remove();
+      g.selectAll(".axis").remove();
+
+      // Stack the data
+      var series = stack(filteredData);
+
+      // Append the groups for each series
+      var serie = g.selectAll(".serie")
+        .data(series)
+        .enter().append("g")
+          .attr("class", "serie")
+          .attr("fill", function(d) { return colors(d.key); });
+
+      serie.selectAll("rect")
+        .data(function(d) { return d; })
+        .enter().append("rect")
+          .attr("x", function(d) { return x(d.data.date); })
+          .attr("y", function(d) { return y(Math.max(d[0], d[1])); })
+          .attr("height", function(d) { return Math.abs(y(d[0]) - y(d[1])); })
+          .attr("width", x.bandwidth())
+          .on("mouseover", function(event, d) {
+            var variable = d3.select(this.parentNode).datum().key;
+            var value = d.data[variable].toFixed(2);
+            tooltip.style("display", null)
+                   .html("<strong>" + variable + "</strong><br/>Value: " + value);
+          })
+          .on("mousemove", function(event, d) {
+            tooltip.style("left", (event.pageX + 10) + "px")
+                   .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.style("display", "none");
+          });
+
+      // Add x-axis to the SVG at the bottom
+      g.append("g")
+          .attr("class", "axis axis--x")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+        .selectAll("text")
+          .attr("dx", "-1em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-65)")
+          .style("text-anchor", "end");
+
+      // Add y-axis to the SVG
+      g.append("g")
+          .attr("class", "axis axis--y")
+          .call(yAxis);
+    }
+
+    // Initial chart rendering
+    updateChart();
+
+    // Event listeners for date selectors
+    startDateSelect.on("change", function() {
+      var startDate = new Date(startDateSelect.property("value"));
+      var endDate = new Date(endDateSelect.property("value"));
+
+      // Ensure start date is before end date
+      if (startDate > endDate) {
+        alert("Start date must be before or equal to end date.");
+        startDateSelect.property("value", initialStartDate);
+      } else {
+        updateChart();
+      }
+    });
+
+    endDateSelect.on("change", function() {
+      var startDate = new Date(startDateSelect.property("value"));
+      var endDate = new Date(endDateSelect.property("value"));
+
+      // Ensure end date is after start date
+      if (endDate < startDate) {
+        alert("End date must be after or equal to start date.");
+        endDateSelect.property("value", initialEndDate);
+      } else {
+        updateChart();
+      }
+    });
+
+    // Add legend
+    var legend = svg.selectAll(".legend")
+      .data(colors.domain().slice())
+      .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+        .attr("x", width + margin.left + margin.right - 18)
+        .attr("y", margin.top)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", colors);
+
+    legend.append("text")
+        .attr("x", width + margin.left + margin.right - 24)
+        .attr("y", margin.top + 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d; });
+
+    // Download SVG button functionality
+    d3.select("#downloadSVG").on("click", function() {
+      var svgString = new XMLSerializer().serializeToString(svg.node());
+      var blob = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+      var url = URL.createObjectURL(blob);
+
+      var downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = "chart.svg";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
+
+    // Download Data button functionality
+    d3.select("#downloadData").on("click", function() {
+      var selectedStartDate = new Date(startDateSelect.property("value"));
+      var selectedEndDate = new Date(endDateSelect.property("value"));
+
+      // Filter data based on selected date range
+      var filteredData = data.filter(function(d) {
+        return d.date >= selectedStartDate && d.date <= selectedEndDate;
+      });
+
+      // Convert data to CSV format
+      var csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Date,Var1,Var2,Var3,Var4,Var5\n";
+
+      filteredData.forEach(function(d) {
+        var row = [
+          formatDate(d.date),
+          d.Var1.toFixed(2),
+          d.Var2.toFixed(2),
+          d.Var3.toFixed(2),
+          d.Var4.toFixed(2),
+          d.Var5.toFixed(2)
+        ].join(",");
+        csvContent += row + "\n";
+      });
+
+      var encodedUri = encodeURI(csvContent);
+      var downloadLink = document.createElement("a");
+      downloadLink.href = encodedUri;
+      downloadLink.download = "data.csv";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
+
+  </script>
+</body>
