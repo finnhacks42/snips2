@@ -1,0 +1,66 @@
+Finn Lattimore
+Data Scientist/Machine Learning Researcher
+finnlattimore@gmail.com
+
+Summary
+
+I love playing with ideas and using my critical thinking ability and technical skills to solve applied problems. I also enjoy presenting complex information and ideas to others and find it helps broaden my own understanding. I take a collaborative approach to leadership, based on developing mutual respect. When in a leadership role, I see my job as to support the team to do great work.
+
+I bring together skills in machine learning, data analysis and visualization, applied statistics and software development. I am competent in scientific Python (numpy, pandas, scikit learn, matplotlib, etc) and also have experience with Java, SQL, R and high performance computing systems. Through my PhD, I have developed an in-depth understanding of machine learning. I am highly self-motivated, and above all I enjoy the interaction and drive of a team cooperating to achieve a goal. 
+
+My strengths are: my analytical capacity, technical ability, mature interpersonal approach, and good written and oral communication skills, developed through the presentation of technical papers, lectures and training materials. I am able to quickly read and assimilate technical information and can learn new skills rapidly.
+
+Technical Skills
+AI Machine Learning, ML at Scale, Causal Inference, Reinforcement Learning, Data Mangling, Data Visualisation, Python, Numpy, Pandas, Skicit-learn, Git, SQL, AWS, Google Cloud, Vorpal Wabbit, PySpark, Hadoop-Mapreduce, Java
+
+Employment
+
+Jan 2022  - current Principal Data Scientist, Reserve Bank of Australia
+As the technical lead for a newly established team, this role includes mentoring and developing junior and senior data scientists, establishing tools and and engineering practices for data science, identifying and communicating opportunities to leverage data science and building up data science capacity across the bank. 
+Led a project leveraging unstructured textual data from multiple sources to develop economic indicators.
+
+2018 – Jan 2022 Principal Researcher at Gradient Institute. 
+Developed and applied ML based, causal inference methodology to help an Australian education department better understand factors impacting student and school outcomes.
+Led the creation of courses exploring the technical issues underlying how machine learning systems can fail and approaches to mitigate these problems to avoid unethical outcomes. Delivered these courses to over 100 data scientists and leaders across industry & government.
+Collaborated with the Human Rights Commission on a technical paper demonstrating how algorithmic bias arises and implications for mitigation.
+Initiated a causal inference reading group to extend expertise and build connections between machine learners and economists working on policy questions. 
+Supervised summer scholars tackling real research questions in ethics and causality. 
+
+
+2016 – 2018 Senior Data scientist at Ambiata. This role involved liaising with clients to translate business challenges into data science problems and communicating modelling results, feature engineering and predictive modelling at terabyte scale, designing and deploying experiments to estimate the impact of marketing interventions and mentoring junior data scientists. 
+
+2016 Consultant data scientist at Industrie IT. This involved data collection, integration, modelling, and visualisation, geo-spatial analysis, including developing a bulk geocoding system based on GNAF data, and developing ways to communicate results and corresponding uncertainties to clients. 
+
+2008 – 2013 Data scientist with the Department of Defence. This role involved providing advanced data analysis support, liaising with clients to identify their data analysis challenges, developing and applying novel analytics and designing, creating and supporting software to automate these techniques. 
+
+2007 Laboratory demonstrator for first year physics. This involved supervising and assisting students and assessing their reports. I also worked on outreach projects, including science and career fairs, open days and high school programs. Through this work I gained experience presenting technical information to a broad audience. 
+
+
+Education
+
+2014-2018 PhD in computer science at the Australian National University. I explored approaches to causal inference in machine learning and developed an approach to incorporate causal graphical models into reinforcement learning. Lattimore, F. (2017). Learning how to act: making good decisions with machine learning (Doctoral dissertation, The Australian National University (Australia)).
+
+2004-2007 Bachelor of Philosophy with Honours at the Australian National University. Completed  with a high distinction average. Awarded the University Medal in Physics.
+
+1990-2004 I was educated at home and did not attend formal school. During this time I followed my own interests. I learnt German during a 6 month exchange, completed my Queen Scout award, read all the books in our house and took courses in Mathematics, Chemistry, Chinese History, Philosophy and Physics through Open-Learning Australia and ANU Alternative Pathways.
+
+
+
+Publications
+
+Fitzgerald Sice, J., Lattimore, F., Robinson, T. Zhu, A. (2025 - in press). Double LASSO: Replication and Practical Insights. Journal of Applied Econometrics. 
+
+Gray, N., Lattimore, F., McLoughlin, K., & Windsor, C. (2025). An AI-powered tool for central bank business liaisons: Quantitative indicators and on-demand insights from firms (RBA Research Discussion Paper 2025-06). Reserve Bank of Australia. https://www.rba.gov.au/publications/rdp/2025/2025-06.html
+
+Cárdenas, D., Lattimore, F., Steinberg, D., & Reynolds, K. J. (2022). Youth well-being predicts later academic success. Scientific reports, 12(1), 1-13.
+
+Steinberg, D., Reid, A., O'Callaghan, S., Lattimore, F., McCalman, L., & Caetano, T. (2020). Fast fair regression via efficient approximations of mutual information. arXiv preprint arXiv:2002.06200.
+
+Lattimore, F., & Rohde, D. (2019). Replacing the do-calculus with Bayes rule. arXiv preprint arXiv:1906.07125.
+
+Lattimore, F., Lattimore, T., & Reid, M. D. (2016). Causal bandits: Learning good interventions via causal inference. Advances in Neural Information Processing Systems, 29.
+
+
+Other Interests
+I enjoy sailing, reading, hiking, rock climbing and tinkering with robotics and other projects. My side projects over the past few years include a foray into personal genomics data, making a dinosaur museum in a box, an arduino powered “story box” for pre-schoolers and building a plywood sailing dinghy. 
+
